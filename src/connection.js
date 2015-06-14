@@ -1,14 +1,20 @@
 var Connection = Connection || {};
 
-Connection = function (layer, host, port, next) {
+Connection = function (gamePanel, host, port) {
     var self = this;
-    this.host = host, this.port = port;
-    this.layer = layer;
+    this.host = host;
+    this.port = port;
+    this.gamePanel = gamePanel;
     this.pomelo = window.pomelo;
-    var route = 'gate.gateHandler.queryEntry'
-    pomelo.init({
-        host: host,
-        port: port,
+
+};
+
+Connection.prototype.connect = function(next) {
+    var self = this;
+    var route = 'gate.gateHandler.queryEntry';
+    self.pomelo.init({
+        host: self.host,
+        port: self.port,
         log: true
     }, function() {
         self.pomelo.request(route, { }, function(data) {
@@ -19,9 +25,8 @@ Connection = function (layer, host, port, next) {
 
 Connection.prototype.startConnectorSession = function(host, port, next) {
     var self = this;
-    var pomelo = window.pomelo;
     var route = 'connector.entryHandler.entry';
-    pomelo.init({
+    self.pomelo.init({
         host: host,
         port: port,
         log: true
@@ -29,71 +34,34 @@ Connection.prototype.startConnectorSession = function(host, port, next) {
         pomelo.request(route, {
         }, function(data) {
             console.log(data);
-            pomelo.request('gameHall.playerHandler.addToGame', { }, function(data) {
-                self.layer.peers = {};
-                for (var i in data) {
-                    self.layer.peers[data[i].entityId] = data[i];
-                }
-            console.log(self.layer.peers);
+            self.gamePanel.layer.playerId = data.playerId;
             next();
-            })
         });
     });
 };
 
-Connection.prototype.addLayer = function (layer) {
-},
-
-// get the latest data from server
-Connection.prototype.sync = function () {
-    // TODO for THU-wyw
-//    this.layer.peers = // position, speed, radius, property (Gang.RED|BULE)
-    this.layer.peers = [];
-    this.layer.asters = [];
-    var peer = this.layer.ovariumDetails;
-    var aster = new Aster(peer.position, peer.speed, peer.scale * globals.img_radius, peer.property)
-    this.layer.asters.push(aster);
-    this.layer.quadtree.insert(aster);
-    for (var i = 0; i < 10; i ++) {
-        peer = {
-            position: {
-                x: Math.random() * globals.playground.width,
-                y: Math.random() * globals.playground.height
-            },
-            speed: {
-                x: Math.random() * 3,
-                y: Math.random() * 3
-            },
-            // recommend init value of radius to be 0~1
-            radius: Math.random(),
-            property: ASTERPROPERTY.NEUTRAL
-        };
-        aster = new Aster(peer.position, peer.speed, peer.radius * globals.img_radius, peer.property);
-        this.layer.asters.push(aster);
-        cc.log("New Aster:"+aster.pos.x+"   "+aster.radius);
-        this.layer.quadtree.insert(aster);
-    }
-
-//    this.layer.playerPeers =
-    // TODO for THU-wyw
-//    this.layer.ovariumDetails = // lookup detailed structure in StartLayer.ovariumDetails
-
-    // on completion of sync, call the following method
+Connection.prototype.startGame = function(next) {
+    var self = this;
+    pomelo.request('gameHall.playerHandler.addToGame', { }, function(data) {
+        console.log(data);
+        self.gamePanel.playerList = data.playerList;
+        for (var i in data.asterList) {
+            self.gamePanel.asterList[i] = new Aster(data.asterList[i]);
+        }
+        next();
+    });
 };
 
-// TODO for THU-wyw
-Connection.prototype.addListeners = function () {
-
-};
 
 // TODO for THU-wyw
 // Called when local ejection event is evoked
 // Maybe the whole list of peer should be updated
-Connection.prototype.eject = function (ejectedMessage) {
-    var recievedMessage = {};
-    recievedMessage = {
-        id : 100,
-        username: "NICE"
-    };
-    return recievedMessage;
+Connection.prototype.eject = function (angleVector, next) {
+    var self = this;
+    var route = 'gameHall.playerHandler.eject';
+    this.pomelo.request(route, {
+        angleVector: angleVector
+    }, function(asterId) {
+        next(asterId);
+    });
 };

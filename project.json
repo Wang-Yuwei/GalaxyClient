@@ -13,13 +13,11 @@
     "jsList" : [
         "src/resource.js",
         "src/PeerSprite.js",
+        "src/Connection.js",
+        "src/gamePanel.js",
         "src/app.js",
         "src/global.js",
         "src/pomelo-cocos2d-js.js",
-        "src/connection.js",
-        "src/MXCIFQuadtree.js",
-        "src/aster.js",
-        "src/GGeometry.js",
-        "src/GPhysics.js"
+        "src/aster.js"
     ]
 }
