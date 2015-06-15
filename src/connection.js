@@ -60,6 +60,7 @@ Connection.prototype.startGame = function(next) {
         for (var i in data.asterList) {
             self.gamePanel.asterList[i] = new Aster(data.asterList[i]);
         }
+        setInterval(function() {self.updateData();}, 5000);
         next();
     });
 };
@@ -75,5 +76,34 @@ Connection.prototype.eject = function (angleVector, next) {
         angleVector: angleVector
     }, function(asterId) {
         next(asterId);
+    });
+};
+
+Connection.prototype.updateData = function() {
+    var self = this;
+    var route = 'gameHall.playerHandler.updateData';
+    console.log(self);
+    self.pomelo.request(route, {}, function(data) {
+        self.gamePanel.playerList = data.playerList;
+        var asterList = self.gamePanel.asterList;
+        console.log(self.gamePanel.layer.playerId);
+        console.log(data);
+        for (var asterId in asterList) {
+            if (data.asterList[asterId] == undefined) {
+                asterList[asterId].deleteAster();
+                delete asterList[asterId];
+            }
+        }
+        for (var asterId in data.asterList) {
+            if (asterList[asterId] == undefined) {
+                asterList[asterId] = new Aster(data.asterList[asterId]);
+                asterList[asterId].createSprites(self.gamePanel.layer);
+            } else {
+                var aster = new Aster(data.asterList[asterId]);
+                aster.asterSprite = asterList[asterId].asterSprite;
+                asterList[asterId] = aster;
+                asterList[asterId].asterSprite.aster = aster;
+            }
+        }
     });
 };
