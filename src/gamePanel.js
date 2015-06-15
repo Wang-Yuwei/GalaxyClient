@@ -24,16 +24,23 @@ gamePanel.prototype = {
         //this.layer.schedule(function() {self.update();}, 1 / globals.frameRate);
     },
 
+    gameOver: function() {
+
+    },
+
     update: function() {
         for (var asterId in this.asterList) {
             this.asterList[asterId].move();
         }
         this.handleAstersCollision();
-        this.handleWallsCollision();
+
         var selfPlayer = this.asterList[this.playerList[this.layer.playerId]];
+        if (selfPlayer == undefined) {
+            this.gameOver();
+        }
+
+        this.handleWallsCollision();
         this.layer.viewCenter = selfPlayer.position;
-//        cc.log(this.layer.viewCenter);
-//        cc.log(selfPlayer.velocity);
 
         this.layer.updateWalls();
         for (var asterId in this.asterList) {

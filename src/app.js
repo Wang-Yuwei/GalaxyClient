@@ -15,9 +15,12 @@ var StartLayer = cc.Layer.extend({
 
     ctor: function() {
         this._super();
+        this.init();
+    },
+
+    init: function() {
         this.initLayer();
         this.startGame();
-        return true;
     },
 
     initLayer: function() {
@@ -27,6 +30,10 @@ var StartLayer = cc.Layer.extend({
         this.setupBackground();
         this.setupWalls();
         this.gamePanel = new gamePanel(this);
+    },
+
+    endGame: function() {
+        this.parent.switchTo(1);
     },
 
     cacheTextures: function () {
@@ -165,6 +172,8 @@ var StartLayer = cc.Layer.extend({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
             onTouchBegan: function(touch, event) {
+//                self.endGame();
+//                return true;
                 var pos = touch.getLocation();
                 var angleVector = {
                     x: pos.x - self.windowSize.width / 2,
@@ -185,11 +194,27 @@ var StartLayer = cc.Layer.extend({
     }
 });
 
+var GameoverLayer = cc.Layer.extend({
+    ctor: function() {
+        this._super();
+        var sprite = new cc.Sprite(res.Restart_png);
+        var winSize = cc.winSize;
+        sprite.attr({
+            x: winSize.x / 2,
+            y: winSize.y / 2
+        });
+    }
+});
+
 var StartScene = cc.Scene.extend({
     onEnter: function () {
         this._super();
+//        var startLayer = new StartLayer();
+//        startLayer.init();
+//        var layer = new cc.LayerMultiplex(startLayer, new GameoverLayer());
         var layer = new StartLayer();
-        this.addChild(layer);
+        this.addChild(layer, 0);
+        director.runScene(this);
     }
 });
 

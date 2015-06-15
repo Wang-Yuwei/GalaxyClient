@@ -11,7 +11,8 @@ var res = {
     WallCollisionEffect_plist : "res/collision_effect.plist",
     EmergenceEffect_plist : "res/emergence_effect.plist",
     BlobSparkles_tga : "res/anim_sparkle.tga",
-    OvariumHalo_png : "res/halo.png"
+    OvariumHalo_png : "res/halo.png",
+    Restart_png : "res/restart.png"
 };
 
 var g_resources = [];
