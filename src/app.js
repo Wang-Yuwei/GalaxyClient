@@ -33,7 +33,7 @@ var GameoverLayer = cc.Layer.extend({
     },
 
     restartGame: function () {
-//        cc.director.replaceScene(new cc.TransitionSlideInR(1, new StartLayer()));
+        cc.director.replaceScene(new cc.TransitionSlideInR(1, new StartScene()));
 //        cc.game.restart();
     }
 });
@@ -233,6 +233,8 @@ var StartLayer = cc.Layer.extend({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
             onTouchBegan: function(touch, event) {
+//                self.endGame();
+//                return true;
                 var pos = touch.getLocation();
                 var angleVector = {
                     x: pos.x - self.windowSize.width / 2,

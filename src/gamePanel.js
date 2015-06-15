@@ -122,8 +122,8 @@ gamePanel.prototype = {
             x: aster.velocity.x + angleVector.x * globals.ejectInitSpeed,
             y: aster.velocity.y + angleVector.y * globals.ejectInitSpeed
         };
-        var m1 = this.cube(aster.radius) * 0.9;
-        var m2 = this.cube(aster.radius) * 0.1;
+        var m1 = this.cube(aster.radius) * 0.99;
+        var m2 = this.cube(aster.radius) * 0.01;
         var newAster = new Aster({
             position: {
                 x: aster.position.x + aster.radius * angleVector.x,
@@ -148,7 +148,7 @@ gamePanel.prototype = {
         var v = aster1.radius * aster1.radius * aster1.radius + aster2.radius * aster2.radius * aster2.radius;
         var d = this.getDistance(aster1.position, aster2.position);
         var x1;
-        if (aster1.radius + aster2.radius * 2 < d) {
+        if (aster1.radius > d) {
             x1 = 0;
         } else {
             x1 = (3 * d * d - Math.sqrt(12 * d * v - 3 * d * d * d * d)) / (6 * d);
@@ -159,7 +159,7 @@ gamePanel.prototype = {
         var totalMass = v - this.cube(x1);
         aster1.velocity = {
             x: mx / totalMass,
-            y: mx / totalMass
+            y: my / totalMass
         };
         aster1.radius = Math.pow(totalMass, 1 / 3);
         aster2.radius = x1;
