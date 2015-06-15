@@ -38,11 +38,13 @@ gamePanel.prototype = {
             this.layer.endGame();
         } else {
             this.layer.viewCenter = selfPlayer.position;
+            this.layer.velocity = selfPlayer.velocity;
         }
 
         this.handleWallsCollision();
 
         this.layer.updateWalls();
+        this.layer.updateBGSparkles();
         for (var asterId in this.asterList) {
             this.asterList[asterId].updateView();
         }
@@ -144,7 +146,7 @@ gamePanel.prototype = {
         };
         newAster.createSprites(this.layer);
         this.asterList[newAster.asterId] = newAster;
-        this.layer.addEjectionEffect(eventPos, Math.atan2(angleVector.y, angleVector.x));
+//        this.layer.addEjectionEffect(eventPos, Math.atan2(angleVector.y, angleVector.x));
     },
     absorbAster: function(aster1, aster2) {
         var v = aster1.radius * aster1.radius * aster1.radius + aster2.radius * aster2.radius * aster2.radius;
@@ -169,6 +171,12 @@ gamePanel.prototype = {
             delete this.asterList[aster2.asterId];
             aster2.deleteAster();
         }
+        var d_x = (aster1.position.x - aster2.position.x);
+        var d_y = (aster1.position.y - aster2.position.y);
+        this.layer.addAbsortionEffect({
+            x: aster2.position.x + x1 / d * d_x,
+            y: aster2.position.y + x1 / d * d_y,
+        }, Math.atan2(d_y, d_x), aster2.radius);
     },
     checkCollision: function (aster1, aster2) {
         var distance = (aster1.position.x - aster2.position.x) * (aster1.position.x - aster2.position.x) +

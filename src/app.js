@@ -82,7 +82,7 @@ var StartLayer = cc.Layer.extend({
     },
 
     initLayer: function() {
-        this.setScale(0.5);
+        this.setScale(0.75);
         this.windowSize = cc.winSize;
         this.cacheTextures();
         this.setupBackground();
@@ -116,7 +116,7 @@ var StartLayer = cc.Layer.extend({
     },
 
     generateRandomAnchorPointInWorldSpace: function () {
-        return cc.p(Math.random() * globals.playground.width, Math.random() * globals.playground.height);
+        return cc.p((1 - 2 * Math.random()) * globals.playground.width, (1 - 2 * Math.random()) * globals.playground.height);
     },
 
     generateRandomAnchorPointInViewSpace: function () {
@@ -196,6 +196,18 @@ var StartLayer = cc.Layer.extend({
         }
     },
 
+    updateBGSparkles: function () {
+        var speed = this.velocity;
+        for (var i = 0; i < this.backgroundSparkles.length; i ++) {
+            var sparkle = this.backgroundSparkles[i];
+            sparkle.runAction(cc.MoveBy(1 / globals.frameRate,
+                - speed.x / 3,
+                - speed.y / 3
+            ));
+        }
+    },
+
+
     setupBackground: function () {
         var sparkleTexture = cc.textureCache.addImage(res.BlobSparkles_tga);
         this.backgroundSparkles = [];
@@ -232,22 +244,26 @@ var StartLayer = cc.Layer.extend({
         var ejectionPSScale = 0.1;
         var ps = new cc.ParticleSystem(res.ParticleTexture_plist);
         ps.setScale(ejectionPSScale);
+        var pos = this.convertToViewpointSpace(absortionPosition);
         ps.attr({
-            sourcePos: absortionPosition,
+            sourcePos: cc.p(
+                -440 + pos.x,
+                420 + pos.y
+            ),
             angle: (angle * 180) / Math.PI
         });
         ps.setPositionType(cc.ParticleSystem.TYPE_FREE);
         this.addChild(ps);
     },
 
-    addAbsortionEffect: function (position, angle) {
+    addAbsortionEffect: function (position, angle, scale) {
         var absortionHalo = new cc.Sprite(this.ovariumHaloTexture);
         angle = - angle * 180 / Math.PI + 90;
 
         absortionHalo.setRotation((angle + 360)% 180);
-        absortionHalo.setScale(0.5);
-        absortionHalo.attr(position);
-        absortionHalo.runAction(cc.fadeOut(0.5));
+        absortionHalo.setScale(scale / 30);
+        absortionHalo.attr(this.convertToViewpointSpace(position));
+        absortionHalo.runAction(cc.fadeOut(0.1));
         this.addChild(absortionHalo, 2);
     },
 
