@@ -6,11 +6,11 @@ var globals = {
         height: 800
     },
     wallThickness: 20,
-    ejectInitSpeed: 7,
+    ejectInitSpeed: 17,
     ejectForce: 0.5,
     frameRate: 24,
     img_radius: 59.5,
-    serverHost: "192.168.184.135",
+    serverHost: "192.168.1.2",
     serverPort: 3014
 };
 

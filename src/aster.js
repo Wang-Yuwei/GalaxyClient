@@ -12,6 +12,12 @@ Aster.prototype = {
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
     },
+    reverseVelocityX: function () {
+        this.velocity.x = - this.velocity.x;
+    },
+    reverseVelocityY: function () {
+        this.velocity.y = - this.velocity.y;
+    },
     createSprites: function(layer) {
         this.layer = layer;
         this.asterSprite = new AsterSprite(this, this.layer);

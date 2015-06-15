@@ -28,7 +28,9 @@ gamePanel.prototype = {
         for (var asterId in this.asterList) {
             this.asterList[asterId].move();
         }
+        this.layer.updateWalls();
         this.handleAstersCollision();
+        this.handleWallsCollision();
         this.layer.viewCenter = this.asterList[this.playerList[this.layer.playerId]].position;
         for (var asterId in this.asterList) {
             this.asterList[asterId].updateView();
@@ -56,6 +58,29 @@ gamePanel.prototype = {
             this.asterList[i].createSprites(this.layer);
         }
     },
+
+    handleWallsCollision: function () {
+        for (var i in this.asterList) {
+            var aster = this.asterList[i];
+            var x = aster.position.x, y = aster.position.y;
+            var v = aster.velocity;
+            var r = aster.radius;
+            if (x < r && v.x < 0) {
+                aster.position.x = 2 * r - x;
+                aster.reverseVelocityX();
+            } else if (x + r > globals.playground.width && v.x > 0) {
+                aster.position.x = 2 * globals.playground.width - aster.position.x - 2 * r;
+                aster.reverseVelocityX();
+            } else if (y < r && v.y < 0) {
+                aster.position.y = 2 * r - y;
+                aster.reverseVelocityY();
+            } else if (y + r > globals.playground.height && v.y > 0) {
+                aster.position.y = 2 * globals.playground.height - aster.position.y - 2 * r;
+                aster.reverseVelocityY();
+            }
+        }
+    },
+
     handleAstersCollision: function() {
         for (var i in this.asterList) {
             for (var j in this.asterList) {
@@ -81,7 +106,7 @@ gamePanel.prototype = {
     },
     playerEject: function(playerId, angleVector, asterId) {
         var aster = this.asterList[this.playerList[playerId]];
-        console.log(aster.radius);
+//        console.log(aster.radius);
         var ejectVelocity = {
             x: aster.velocity.x + angleVector.x * globals.ejectInitSpeed,
             y: aster.velocity.y + angleVector.y * globals.ejectInitSpeed

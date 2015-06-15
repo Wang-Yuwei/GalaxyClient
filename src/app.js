@@ -3,6 +3,7 @@ var StartLayer = cc.Layer.extend({
     playerId: 1,
     backgroundSparkles: [],
     walls: [],
+    wallLocations: [],
     ovariumHaloTexture: null,
     peerTexture: null,
     windowSize: null,
@@ -20,7 +21,7 @@ var StartLayer = cc.Layer.extend({
     },
 
     initLayer: function() {
-        this.setScale(1);
+        this.setScale(0.5);
         this.windowSize = cc.winSize;
         this.cacheTextures();
         this.setupBackground();
@@ -39,9 +40,10 @@ var StartLayer = cc.Layer.extend({
     },
 
     convertToViewpointSpace: function (coor) {
+        cc.log(this.viewCenter);
         return {
-            x: coor.x - this.viewCenter.x,
-            y: coor.y - this.viewCenter.y
+            x: coor.x - this.viewCenter.x + this.windowSize.width / 2,
+            y: coor.y - this.viewCenter.y + this.windowSize.height / 2
         }
     },
 
@@ -51,6 +53,15 @@ var StartLayer = cc.Layer.extend({
 
     generateRandomAnchorPointInViewSpace: function () {
         return this.convertToViewpointSpace(this.generateRandomAnchorPointInWorldSpace());
+    },
+
+    updateWalls: function () {
+        if (this.walls == undefined) return;
+        for (var i = 0; i < this.walls.length; i ++) {
+            var wall = this.walls[i];
+            wall.runAction(cc.place(this.convertToViewpointSpace(this.wallLocations[i])));
+        }
+        cc.log("wall updated");
     },
 
     setupWalls: function () {
@@ -64,7 +75,7 @@ var StartLayer = cc.Layer.extend({
             globals.playground.height
         ]; // [x, y]
         var rotations = [90, 270, 0, 180, 90, 180, 270, 0];
-        var locations = [
+        this.wallLocations = [
             // up, down, left, right
             {
                 x: globals.playground.width / 2,
@@ -94,7 +105,7 @@ var StartLayer = cc.Layer.extend({
                 y: - globals.wallThickness / 2
         }
         ];
-        console.log(locations);
+//        console.log(locations);
         for (var i = 0; i < 8; i ++) {
             var wall = null;
             var s = globals.wallThickness / 128;
@@ -108,7 +119,7 @@ var StartLayer = cc.Layer.extend({
                 wall.setScale(s, s);
             }
             wall.setRotation(rotations[i]);
-            wall.attr(locations[i]);
+            wall.attr(this.wallLocations[i]);
             this.addChild(wall);
         }
     },
@@ -161,7 +172,7 @@ var StartLayer = cc.Layer.extend({
                     x: angleVector.x / r,
                     y: angleVector.y / r
                 };
-                console.log(angleVector);
+//                console.log(angleVector);
                 self.gamePanel.eject(angleVector);
                 return true;
             }

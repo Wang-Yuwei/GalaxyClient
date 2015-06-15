@@ -40,6 +40,7 @@ var AsterSprite = function(aster, layer) {
 AsterSprite.prototype = {
     logicalPositionToActualPosition: function(position) {
         var self = this;
+//        return position;
         return {
             x: position.x - self.layer.viewCenter.x + self.layer.windowSize.width / 2,
             y: position.y - self.layer.viewCenter.y + self.layer.windowSize.height / 2
