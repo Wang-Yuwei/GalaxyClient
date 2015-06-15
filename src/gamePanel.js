@@ -124,11 +124,12 @@ gamePanel.prototype = {
         };
         var m1 = this.cube(aster.radius) * 0.99;
         var m2 = this.cube(aster.radius) * 0.01;
+        var eventPos = {
+            x: aster.position.x + aster.radius * angleVector.x,
+            y: aster.position.y + aster.radius * angleVector.y
+        };
         var newAster = new Aster({
-            position: {
-                x: aster.position.x + aster.radius * angleVector.x,
-                y: aster.position.y + aster.radius * angleVector.y
-            },
+            position: eventPos,
             velocity: ejectVelocity,
             radius: Math.pow(m2, 1/3),
             property: aster.property,
@@ -143,6 +144,7 @@ gamePanel.prototype = {
         };
         newAster.createSprites(this.layer);
         this.asterList[newAster.asterId] = newAster;
+        this.layer.addEjectionEffect(eventPos, Math.atan2(angleVector.y, angleVector.x));
     },
     absorbAster: function(aster1, aster2) {
         var v = aster1.radius * aster1.radius * aster1.radius + aster2.radius * aster2.radius * aster2.radius;

@@ -227,6 +227,30 @@ var StartLayer = cc.Layer.extend({
             this.backgroundSparkles.push(sparkle);
         }
     },
+
+    addEjectionEffect: function (absortionPosition, angle) {
+        var ejectionPSScale = 0.1;
+        var ps = new cc.ParticleSystem(res.ParticleTexture_plist);
+        ps.setScale(ejectionPSScale);
+        ps.attr({
+            sourcePos: absortionPosition,
+            angle: (angle * 180) / Math.PI
+        });
+        ps.setPositionType(cc.ParticleSystem.TYPE_FREE);
+        this.addChild(ps);
+    },
+
+    addAbsortionEffect: function (position, angle) {
+        var absortionHalo = new cc.Sprite(this.ovariumHaloTexture);
+        angle = - angle * 180 / Math.PI + 90;
+
+        absortionHalo.setRotation((angle + 360)% 180);
+        absortionHalo.setScale(0.5);
+        absortionHalo.attr(position);
+        absortionHalo.runAction(cc.fadeOut(0.5));
+        this.addChild(absortionHalo, 2);
+    },
+
     addTouchListener: function() {
         var self = this;
         var touchListener = cc.EventListener.create({
