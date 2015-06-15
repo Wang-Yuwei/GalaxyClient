@@ -42,7 +42,18 @@ Connection.prototype.startConnectorSession = function(host, port, next) {
 
 Connection.prototype.startGame = function(next) {
     var self = this;
-    pomelo.request('gameHall.playerHandler.addToGame', { }, function(data) {
+    this.pomelo.on('onNewPlayer', function(data) {
+        console.log('new player!');
+        console.log(data);
+        self.gamePanel.playerList[data.playerId] = data.aster.asterId;
+        self.gamePanel.asterList[data.aster.asterId] = new Aster(data.aster);
+    });
+    this.pomelo.on('onPlayerEject', function(data) {
+        console.log('new player!');
+        console.log(data);
+        self.gamePanel.playerEject(data.playerId, data.angleVector, data.asterId);
+    });
+    this.pomelo.request('gameHall.playerHandler.addToGame', { }, function(data) {
         console.log(data);
         self.gamePanel.playerList = data.playerList;
         for (var i in data.asterList) {
