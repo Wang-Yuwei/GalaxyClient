@@ -8,7 +8,7 @@ var globals = {
     wallThickness: 20,
     ejectInitSpeed: 17,
     ejectForce: 0.5,
-    frameRate: 24,
+    frameRate: 12,
     img_radius: 59.5,
     serverHost: "192.168.1.2",
     serverPort: 3014

@@ -28,10 +28,14 @@ gamePanel.prototype = {
         for (var asterId in this.asterList) {
             this.asterList[asterId].move();
         }
-        this.layer.updateWalls();
         this.handleAstersCollision();
         this.handleWallsCollision();
-        this.layer.viewCenter = this.asterList[this.playerList[this.layer.playerId]].position;
+        var selfPlayer = this.asterList[this.playerList[this.layer.playerId]];
+        this.layer.viewCenter = selfPlayer.position;
+//        cc.log(this.layer.viewCenter);
+//        cc.log(selfPlayer.velocity);
+
+        this.layer.updateWalls();
         for (var asterId in this.asterList) {
             this.asterList[asterId].updateView();
         }

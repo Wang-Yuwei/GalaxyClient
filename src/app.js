@@ -40,7 +40,7 @@ var StartLayer = cc.Layer.extend({
     },
 
     convertToViewpointSpace: function (coor) {
-        cc.log(this.viewCenter);
+//        cc.log(this.viewCenter);
         return {
             x: coor.x - this.viewCenter.x + this.windowSize.width / 2,
             y: coor.y - this.viewCenter.y + this.windowSize.height / 2
@@ -59,9 +59,12 @@ var StartLayer = cc.Layer.extend({
         if (this.walls == undefined) return;
         for (var i = 0; i < this.walls.length; i ++) {
             var wall = this.walls[i];
-            wall.runAction(cc.place(this.convertToViewpointSpace(this.wallLocations[i])));
+            var v_p = this.convertToViewpointSpace(this.wallLocations[i]);
+            if (i == 0) {
+                cc.log(v_p);
+            }
+            wall.runAction(cc.place(v_p));
         }
-        cc.log("wall updated");
     },
 
     setupWalls: function () {
@@ -121,6 +124,7 @@ var StartLayer = cc.Layer.extend({
             wall.setRotation(rotations[i]);
             wall.attr(this.wallLocations[i]);
             this.addChild(wall);
+            this.walls.push(wall);
         }
     },
 
