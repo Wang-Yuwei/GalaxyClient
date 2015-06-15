@@ -47,6 +47,7 @@ Connection.prototype.startGame = function(next) {
         console.log(data);
         self.gamePanel.playerList[data.playerId] = data.aster.asterId;
         self.gamePanel.asterList[data.aster.asterId] = new Aster(data.aster);
+        self.gamePanel.asterList[data.aster.asterId].createSprites(self.gamePanel.layer);
     });
     this.pomelo.on('onPlayerEject', function(data) {
         console.log('new player!');
