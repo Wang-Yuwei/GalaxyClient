@@ -6,6 +6,9 @@ gamePanel = function(layer) {
     this.asterList = {};
     this.playerList = {};
     this.layer = layer;
+    for (var i in this.asterList) {
+        cc.log("asterList: " + i);
+    }
     this.connection = new Connection(this, globals.serverHost, globals.serverPort);
 };
 
@@ -24,10 +27,6 @@ gamePanel.prototype = {
         //this.layer.schedule(function() {self.update();}, 1 / globals.frameRate);
     },
 
-    gameOver: function() {
-
-    },
-
     update: function() {
         for (var asterId in this.asterList) {
             this.asterList[asterId].move();
@@ -36,11 +35,12 @@ gamePanel.prototype = {
 
         var selfPlayer = this.asterList[this.playerList[this.layer.playerId]];
         if (selfPlayer == undefined) {
-            this.gameOver();
+            this.layer.endGame();
+        } else {
+            this.layer.viewCenter = selfPlayer.position;
         }
 
         this.handleWallsCollision();
-        this.layer.viewCenter = selfPlayer.position;
 
         this.layer.updateWalls();
         for (var asterId in this.asterList) {

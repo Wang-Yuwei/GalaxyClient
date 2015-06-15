@@ -1,3 +1,54 @@
+var GameoverLayer = cc.Layer.extend({
+    ctor: function() {
+        this._super();
+        var sprite = new cc.Sprite(res.Restart_png);
+        this.winSize = cc.winSize;
+        sprite.attr({
+            x: this.winSize.width / 2,
+            y: this.winSize.height * 0.35
+        });
+        this.addChild(sprite, 0);
+        var hint = new cc.LabelTTF("Tap button below to restart ...", "Arial", 20);
+        var menu = new cc.MenuItemLabel(hint, this.restartGame, this);
+        menu.attr({
+            x: this.winSize.width / 2,
+            y: this.winSize.height * 0.6
+        });
+        this.addChild(menu, 0);
+        this.addTouchListener();
+    },
+
+    addTouchListener: function () {
+        var self = this;
+        var touchListener = cc.EventListener.create({
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: true,
+            onTouchBegan: function(touch, event) {
+                cc.log("restart");
+                self.restartGame();
+                return true;
+            }
+        });
+        cc.eventManager.addListener(touchListener, self);
+    },
+
+    restartGame: function () {
+//        cc.director.replaceScene(new cc.TransitionSlideInR(1, new StartLayer()));
+//        cc.game.restart();
+    }
+});
+
+var RestartScene = cc.Scene.extend({
+    onEnter: function () {
+        this._super();
+        var layer = new GameoverLayer();
+        this.addChild(layer);
+    },
+    onExit: function () {
+        this._super();
+    }
+});
+
 var StartLayer = cc.Layer.extend({
     gamePanel: null,
     playerId: 1,
@@ -7,6 +58,7 @@ var StartLayer = cc.Layer.extend({
     ovariumHaloTexture: null,
     peerTexture: null,
     windowSize: null,
+    iScheduler: null,
 
     viewCenter: {
         x: 0,
@@ -15,6 +67,12 @@ var StartLayer = cc.Layer.extend({
 
     ctor: function() {
         this._super();
+        this.gamePanel = null;
+        this.backgroundSparkles = [];
+        this.walls = [];
+        this.wallLocations = [];
+        this.ovariumHaloTexture = null;
+        this.peerTexture = null,
         this.init();
     },
 
@@ -33,7 +91,10 @@ var StartLayer = cc.Layer.extend({
     },
 
     endGame: function() {
-        this.parent.switchTo(1);
+//        this.scheduler.
+        this.cleanup();
+        this.removeAllChildren(true);
+        cc.director.replaceScene(new cc.TransitionSlideInL(1, new RestartScene()));
     },
 
     cacheTextures: function () {
@@ -68,7 +129,7 @@ var StartLayer = cc.Layer.extend({
             var wall = this.walls[i];
             var v_p = this.convertToViewpointSpace(this.wallLocations[i]);
             if (i == 0) {
-                cc.log(v_p);
+//                cc.log(v_p);
             }
             wall.runAction(cc.place(v_p));
         }
@@ -172,8 +233,6 @@ var StartLayer = cc.Layer.extend({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
             onTouchBegan: function(touch, event) {
-//                self.endGame();
-//                return true;
                 var pos = touch.getLocation();
                 var angleVector = {
                     x: pos.x - self.windowSize.width / 2,
@@ -194,18 +253,6 @@ var StartLayer = cc.Layer.extend({
     }
 });
 
-var GameoverLayer = cc.Layer.extend({
-    ctor: function() {
-        this._super();
-        var sprite = new cc.Sprite(res.Restart_png);
-        var winSize = cc.winSize;
-        sprite.attr({
-            x: winSize.x / 2,
-            y: winSize.y / 2
-        });
-    }
-});
-
 var StartScene = cc.Scene.extend({
     onEnter: function () {
         this._super();
@@ -214,7 +261,10 @@ var StartScene = cc.Scene.extend({
 //        var layer = new cc.LayerMultiplex(startLayer, new GameoverLayer());
         var layer = new StartLayer();
         this.addChild(layer, 0);
-        director.runScene(this);
+//        director.runScene(this);
+    },
+    onExit: function () {
+        this._super();
     }
 });
 
