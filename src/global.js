@@ -10,8 +10,9 @@ var globals = {
     ejectForce: 0.5,
     frameRate: 12,
     img_radius: 59.5,
-    serverHost: "192.168.1.2",
-    serverPort: 3014
+    serverHost: "192.168.184.135",
+    serverPort: 3014,
+    updateInterval: 10000
 };
 
 var ASTERPROPERTY = {
